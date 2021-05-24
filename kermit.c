@@ -96,16 +96,16 @@ kermit(short f,				/* Function code */
        char *msg,			/* Message for error packet */
        struct k_response *r) {		/* Response struct */
 
-    int i, j, rc;			/* Workers */
+    int i, rc;				/* Workers */
     int datalen;                        /* Length of packet data field */
     UCHAR *p;                           /* Pointer to packet data field */
     UCHAR *q;                           /* Pointer to data to be checked */
     UCHAR *s;				/* Worker string pointer */
-    UCHAR c, t;                         /* Worker chars */
+    UCHAR t;                            /* Worker chars */
     UCHAR pbc[4];                       /* Copy of packet block check */
     short seq, prev;			/* Copies of sequence numbers */
-    short chklen;                       /* Length of packet block check */
 #ifdef F_CRC
+    short chklen;                       /* Length of packet block check */
     unsigned int crc;                   /* 16-bit CRC */
 #endif /* F_CRC */
     int ok;
@@ -296,6 +296,7 @@ kermit(short f,				/* Function code */
     k->ipktinfo[r_slot].dat = p;	/* Data field, maybe */
 #ifdef F_LP
     if (k->ipktinfo[r_slot].len == 0) {	/* Length 0 means long packet */
+	UCHAR c;
         c = p[2];                       /* Get header checksum */
         p[2] = '\0';
         if (xunchar(c) != chk1(p-3,k)) {  /* Check it */
@@ -337,13 +338,13 @@ kermit(short f,				/* Function code */
 	    chklen = k->bct;
 	}
     }
-#else
     chklen = 1;				/* Block check is always type 1 */
+    debug(DB_LOG,"chkalen",0,chklen);
+#else
     datalen = k->ipktinfo[r_slot].len - 3; /* Data length */
 #endif /* F_CRC */
     debug(DB_LOG,"bct",0,(k->bct));
     debug(DB_LOG,"datalen",0,datalen);
-    debug(DB_LOG,"chkalen",0,chklen);
 
 #ifdef F_CRC
     for (i = 0; i < chklen; i++)        /* Copy the block check */
@@ -863,8 +864,7 @@ chk3(UCHAR *pkt, struct k_data * k) {
 STATIC int
 spkt(char typ, short seq, int len, UCHAR * data, struct k_data * k) {
 
-    unsigned int crc;                   /* For building CRC */
-    int i, j, lenpos, m, n, x;		/* Workers */
+    int i, j, lenpos;			/* Workers */
     UCHAR * s, * buf;
 
     debug(DB_LOG,"spkt len 1",0,len);
@@ -901,6 +901,7 @@ spkt(char typ, short seq, int len, UCHAR * data, struct k_data * k) {
     buf[i] = '\0';
 
 #ifdef F_CRC
+    unsigned int crc;                   /* For building CRC */
     switch (k->bct) {                   /* Add block check */
       case 1:                           /* 1 = 6-bit chksum */
 	buf[i++] = tochar(chk1(&buf[lenpos],k));
@@ -1002,7 +1003,6 @@ ack(struct k_data * k, short seq, UCHAR * text) {
 STATIC void
 spar(struct k_data * k, UCHAR *s, int datalen) {
     int x, y;
-    UCHAR c;
 
     s--;                                /* Line up with field numbers. */
 
@@ -1049,6 +1049,7 @@ spar(struct k_data * k, UCHAR *s, int datalen) {
     }
     if (datalen >= 10) {                /* Capability bits */
         x = xunchar(s[10]);
+    (void)x;				/* -Wunused-but-set-variable */
 
 #ifdef F_LP                             /* Long packets */
         if (!(x & CAP_LP))
@@ -1349,7 +1350,7 @@ gattr(struct k_data * k, UCHAR * s, struct k_response * r) {
 
 STATIC int
 sattr(struct k_data *k, struct k_response *r) {	/* Build and send A packet */
-    int i, x, aln;
+    int i, x;
     short tmp;
     long filelength;
     UCHAR datebuf[DATE_MAX], * p;
@@ -1422,7 +1423,7 @@ sattr(struct k_data *k, struct k_response *r) {	/* Build and send A packet */
 
 STATIC int
 getpkt(struct k_data *k, struct k_response *r) { /* Fill a packet from file */
-    int i, next, rpt, maxlen;
+    int i, next, maxlen;
     static int c;			/* PUT THIS IN STRUCT */
 
     debug(DB_LOG,"getpkt k->s_first",0,(k->s_first));
@@ -1464,7 +1465,6 @@ getpkt(struct k_data *k, struct k_response *r) { /* Fill a packet from file */
     if (k->s_first == -1)
       return(k->size);
 
-    rpt = 0;				/* Initialize repeat counter. */
     while (k->s_first > -1) {		/* Until end of file or string... */
 	if (k->istring) {
 	    next = *(k->istring)++;
