@@ -211,7 +211,7 @@ doarg(char c) {				/* Command-line option parser */
 #endif /* DEBUG */
 	    if (*(xp+1))
 	      fatal("Invalid argument bundling",(char *)0,(char *)0);
-	    *xargv++, xargc--;
+	    xargv++, xargc--;
 	    if ((xargc < 1) || (**xargv == '-'))
 	      fatal("Missing option argument",(char *)0,(char *)0);
 	    s = *xargv;
@@ -262,7 +262,7 @@ doarg(char c) {				/* Command-line option parser */
 	  case 'p':			/* Parity */
 	    if (*(xp+1))
 	      fatal("Invalid argument bundling",(char *)0,(char *)0);
-	    *xargv++, xargc--;
+	    xargv++, xargc--;
 	    if ((xargc < 1) || (**xargv == '-'))
 	      fatal("Missing parity",(char *)0,(char *)0);
 	    switch(x = **xargv) {
