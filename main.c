@@ -431,8 +431,8 @@ main(int argc, char ** argv) {
   date, size, and bytes transferred so far.  These can be used in a
   file-transfer progress display, log, etc.
 */
-	    debug(DB_LOG,"NAME",r.filename ? (char *)r.filename : "(NULL)",0);
-	    debug(DB_LOG,"DATE",r.filedate ? (char *)r.filedate : "(NULL)",0);
+	    debug(DB_LOG,"NAME",(UCHAR *)(r.filename ? (char *)r.filename : "(NULL)"),0);
+	    debug(DB_LOG,"DATE",(UCHAR *)(r.filedate ? (char *)r.filedate : "(NULL)"),0);
 	    debug(DB_LOG,"SIZE",0,r.filesize);
 	    debug(DB_LOG,"STATE",0,r.status);
 	    debug(DB_LOG,"SOFAR",0,r.sofar);
