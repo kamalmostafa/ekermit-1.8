@@ -100,7 +100,7 @@ kermit(short f,				/* Function code */
     int datalen;                        /* Length of packet data field */
     UCHAR *p;                           /* Pointer to packet data field */
     UCHAR *q;                           /* Pointer to data to be checked */
-    UCHAR *s;				/* Worker string pointer */
+    UCHAR *s = (UCHAR *)0;		/* Worker string pointer */
     UCHAR t;                            /* Worker chars */
     UCHAR pbc[4];                       /* Copy of packet block check */
     short seq, prev;			/* Copies of sequence numbers */
@@ -1192,7 +1192,7 @@ decode(struct k_data * k, struct k_response * r, short f, UCHAR *inbuf) {
     unsigned int b8;                    /* 8th bit */
     int rpt;                            /* Repeat count */
     int rc;				/* Return code */
-    UCHAR *p;
+    UCHAR *p = (UCHAR *)0;
 
     rc = X_OK;
     rpt = 0;                            /* Initialize repeat count. */
@@ -1220,7 +1220,7 @@ decode(struct k_data * k, struct k_response * r, short f, UCHAR *inbuf) {
         if (rpt == 0) rpt = 1;          /* If no repeats, then one */
 
         for (; rpt > 0; rpt--) {        /* Output the char 'rpt' times */
-            if (f == 0) {
+            if (p) {
                 *p++ = (UCHAR) a;       /* to memory */
             } else {                    /* or to file */
                 k->obuf[k->obufpos++] = (UCHAR) a; /* Deposit the byte */
@@ -1233,7 +1233,7 @@ decode(struct k_data * k, struct k_response * r, short f, UCHAR *inbuf) {
             }
         }
     }
-    if (f == 0)                         /* If writing to memory */
+    if (p)                              /* If writing to memory */
       *p = '\0';			/* terminate the string */
     return(rc);
 }
