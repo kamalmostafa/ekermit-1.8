@@ -326,9 +326,11 @@ main(int argc, char ** argv) {
     if (db)				/* Open debug log if requested */
       debug(DB_OPN,"debug.log",0,0);
 
+#ifdef DEBUG
     debug(DB_MSG,"Initializing...",0,0);
     debug(DB_LOG,"SIMULATED ERROR RATE:",0,errorrate);
     if (errorrate) srand(seed);		/* Init random error generator */
+#endif
 
 /*  Fill in parameters for this run */
 
