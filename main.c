@@ -109,14 +109,14 @@ int errorrate = 0;			/* Simulated error rate */
 int seed = 1234;			/* Random number generator seed */
 #endif /* DEBUG */
 
-void
+static void
 doexit(int status) {
     devrestore();                       /* Restore device */
     devclose();                         /* Close device */
     exit(status);                       /* Exit with indicated status */
 }
 
-void
+static void
 usage() {
     fprintf(stderr,"E-Kermit %s\n",VERSION);
     fprintf(stderr,"Usage: %s <options>\n",xname);
@@ -139,10 +139,10 @@ usage() {
     fprintf(stderr," -d           Create debug.log\n");
 #endif /* DEBUG */
     fprintf(stderr," -h           Help (this message)\n");
-    doexit(FAILURE);
+    exit(FAILURE);
 }
 
-void
+static void
 fatal(char *msg1, char *msg2, char *msg3) { /* Not to be called except */
     if (msg1) {				    /* from this module */
 	fprintf(stderr,"%s: %s",xname,msg1);
@@ -150,12 +150,12 @@ fatal(char *msg1, char *msg2, char *msg3) { /* Not to be called except */
 	if (msg3) fprintf(stderr,"%s",msg3);
 	fprintf(stderr,"\n");
     }
-    doexit(FAILURE);
+    exit(FAILURE);
 }
 
 /* Simple user interface for testing */
 
-int
+static int
 doarg(char c) {				/* Command-line option parser */
     int x;				/* Parses one option with its arg(s) */
     char *xp, *s;
@@ -292,7 +292,7 @@ doarg(char c) {				/* Command-line option parser */
     return(action);
 }
 
-void
+int
 main(int argc, char ** argv) {
     int status, rx_len, x;
     char c;
@@ -311,7 +311,7 @@ main(int argc, char ** argv) {
 	if (**xargv == '-') {		/* Have dash */
 	    c = *(*xargv+1);		/* Get the option letter */
 	    x = doarg(c);		/* Go handle the option */
-	    if (x < 0) doexit(FAILURE);
+	    if (x < 0) return FAILURE;
     	} else {			/* No dash where expected */
 	    fatal("Malformed command-line option: '",*xargv,"'");
 	}
@@ -322,9 +322,11 @@ main(int argc, char ** argv) {
 /* THE REAL STUFF IS FROM HERE DOWN */
 
     if (!devopen("dummy"))		/* Open the communication device */
-      doexit(FAILURE);
-    if (!devsettings("dummy"))		/* Perform any needed settings */
-      doexit(FAILURE);
+      return FAILURE;
+    if (!devsettings("dummy")) {	/* Perform any needed settings */
+      devclose();
+      return FAILURE;
+    }
     if (db)				/* Open debug log if requested */
       debug(DB_OPN,"debug.log",0,0);
 
@@ -446,4 +448,5 @@ main(int argc, char ** argv) {
 	}
     }
     doexit(SUCCESS);
+    return 0;				/* Not reached */
 }
