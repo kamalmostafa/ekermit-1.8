@@ -47,6 +47,8 @@
 #ifdef __linux
 #include <errno.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
 #endif /* __linux */
 
 /*
