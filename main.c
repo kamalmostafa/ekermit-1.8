@@ -159,7 +159,6 @@ int
 doarg(char c) {				/* Command-line option parser */
     int x;				/* Parses one option with its arg(s) */
     char *xp, *s;
-    struct stat statbuf;
 
     xp = *xargv+1;			/* Pointer for bundled args */
     while (c) {
@@ -181,6 +180,7 @@ doarg(char c) {				/* Command-line option parser */
 	    nfils = 0;			/* Initialize file counter, flag */
 	    cmlist = (UCHAR **)(xargv+1); /* Remember this pointer */
 	    while (--xargc > 0) {	/* Traverse the list */
+		struct stat statbuf;
 		xargv++;
 		s = *xargv;
 #ifdef DEBUG
@@ -294,7 +294,7 @@ doarg(char c) {				/* Command-line option parser */
 
 void
 main(int argc, char ** argv) {
-    int status, rx_len, i, x;
+    int status, rx_len, x;
     char c;
     UCHAR *inbuf;
     short r_slot;
