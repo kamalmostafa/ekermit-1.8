@@ -39,6 +39,8 @@
   and strip it from inbound characters.
 */
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <errno.h>
@@ -141,10 +143,11 @@ devopen(char *device) {
 */
 int
 pktmode(short on) {
+    int r;
     if (ttyfd < 0)                      /* Device must be open */
       return(0);
-    system(on ? "stty raw -echo" : "stty sane"); /* Crude but effective */
-    return(1);
+    r = system(on ? "stty raw -echo" : "stty sane"); /* Crude but effective */
+    return(r == 0);
 }
 
 
@@ -237,7 +240,7 @@ inchk(struct k_data * k) {
 
 int
 readpkt(struct k_data * k, UCHAR *p, int len, int fc) {
-    int x, n, max;
+    int x, n;
     short flag;
     UCHAR c;
 /*
@@ -347,7 +350,9 @@ tx_data(struct k_data * k, UCHAR *p, int n) {
     X_ERROR on failure, including rejection based on name, size, or date.    
 */
 int
-openfile(struct k_data * k, UCHAR * s, int mode) {
+openfile(struct k_data * k, UCHAR * ucs, int mode) {
+
+    char *s = (char *)ucs;
 
     switch (mode) {
       case 1:				/* Read */
@@ -413,7 +418,8 @@ openfile(struct k_data * k, UCHAR * s, int mode) {
 
 ULONG
 fileinfo(struct k_data * k,
-	 UCHAR * filename, UCHAR * buf, int buflen, short * type, short mode) {
+	 UCHAR * ucfilename, UCHAR * buf, int buflen, short * type, short mode) {
+    char *filename = (char *)ucfilename;
     struct stat statbuf;
     struct tm * timestamp, * localtime();
 
@@ -430,7 +436,7 @@ fileinfo(struct k_data * k,
     if (stat(filename,&statbuf) < 0)
       return(X_ERROR);
     timestamp = localtime(&(statbuf.st_mtime));
-    sprintf(buf,"%04d%02d%02d %02d:%02d:%02d",
+    sprintf((char *)buf,"%04d%02d%02d %02d:%02d:%02d",
 	    timestamp->tm_year + 1900,
             timestamp->tm_mon + 1,
             timestamp->tm_mday,
@@ -603,7 +609,7 @@ closefile(struct k_data * k, UCHAR c, int mode) {
 		   (c == 'D')) {	/* This file was incomplete */
 	    if (k->filename) {
 		debug(DB_LOG,"deleting incomplete",k->filename,0);
-		unlink(k->filename);	/* Delete it. */
+		unlink((char *)k->filename);	/* Delete it. */
 	    }
 	}
 	break;
