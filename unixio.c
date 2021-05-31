@@ -73,7 +73,7 @@ static FILE * dp = (FILE *)0;		/* Debug log */
 static int xdebug = 0;			/* Debugging on/off */
 
 void
-dodebug(int fc, UCHAR * label, UCHAR * sval, long nval) {
+dodebug(int fc, char * label, char * sval, long nval) {
 
     if (fc != DB_OPN && !xdebug)
       return;
@@ -264,7 +264,7 @@ readpkt(struct k_data * k, UCHAR *p, int len, int fc) {
     flag = n = 0;                       /* Init local variables */
 
 #ifdef DEBUG
-    p2 = p;
+    p2 = (char *)p;
 #endif	/* DEBUG */
 
     while (1) {

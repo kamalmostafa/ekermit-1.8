@@ -17,7 +17,7 @@
 #define DB_PKT 5			/* Record a Kermit packet in log */
 #define DB_CLS 6			/* Close log */
 
-void dodebug(int, UCHAR *, UCHAR *, long); /* Prototype */
+void dodebug(int, char *, char *, long); /* Prototype */
 /*
   dodebug() is accessed throug a macro that:
    . Coerces its args to the required types.
@@ -27,11 +27,11 @@ void dodebug(int, UCHAR *, UCHAR *, long); /* Prototype */
 #ifdef KERMIT_C
 /* In kermit.c we debug only through a function pointer */
 #define debug(a,b,c,d) \
-if(*(k->dbf))(*(k->dbf))(a,(UCHAR *)b,(UCHAR *)c,(long)(d))
+if(*(k->dbf))(*(k->dbf))(a,(char *)b,(char *)c,(long)(d))
 
 #else  /* KERMIT_C */
 /* Elsewhere we can call the debug function directly */
-#define debug(a,b,c,d) dodebug(a,(UCHAR *)b,(UCHAR *)c,(long)(d))
+#define debug(a,b,c,d) dodebug(a,(char *)b,(char *)c,(long)(d))
 #endif /* KERMIT_C */
 
 #else  /* Debugging not included... */
