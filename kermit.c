@@ -1288,7 +1288,7 @@ numstring(ULONG n, UCHAR * buf, int buflen, struct k_data * k) {
 
 STATIC int
 gattr(struct k_data * k, UCHAR * s, struct k_response * r) {
-    long fsize, fsizek;                 /* File size */
+    long fsize = -1L, fsizek = -1L;     /* File size */
     UCHAR c;                            /* Workers */
     int aln, i, rc;
 
