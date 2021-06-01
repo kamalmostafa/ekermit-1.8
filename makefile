@@ -29,26 +29,26 @@ cc:
 
 #Build with gcc.
 gcc:
-	@UNAME=`uname` ; make "CC=gcc" "CC2=gcc" "CFLAGS=-D$$UNAME -O2" ek
+	@UNAME=`uname` ; make "CC=gcc" "CC2=gcc" "CFLAGS=-D$$UNAME -O2 -Wall" ek
 
 #Ditto but no debugging.
 gccnd:
-	make "CC=gcc" "CC2=gcc" "CFLAGS=-DNODEBUG -O2" ek
+	make "CC=gcc" "CC2=gcc" "CFLAGS=-DNODEBUG -O2 -Wall" ek
 
 #Build with gcc, Receive-Only, minimum size and features.
 gccmin:
 	make "CC=gcc" "CC2=gcc" \
-	"CFLAGS=-DMINSIZE -DOBUFLEN=256 -DFN_MAX=16 -O2" ek
+	"CFLAGS=-DMINSIZE -DOBUFLEN=256 -DFN_MAX=16 -O2 -Wall" ek
 
 #Ditto but Receive-Only:
 gccminro:
 	make "CC=gcc" "CC2=gcc" \
-	"CFLAGS=-DMINSIZE -DOBUFLEN=256 -DFN_MAX=16 -DRECVONLY -O2" ek
+	"CFLAGS=-DMINSIZE -DOBUFLEN=256 -DFN_MAX=16 -DRECVONLY -O2 -Wall" ek
 
 #Minimum size, receive-only, but with debugging:
 gccminrod:
 	make "CC=gcc" "CC2=gcc" \
-	"CFLAGS=-DMINSIZE -DOBUFLEN=256 -DFN_MAX=16 -DRECVONLY -DDEBUG -O2" ek
+	"CFLAGS=-DMINSIZE -DOBUFLEN=256 -DFN_MAX=16 -DRECVONLY -DDEBUG -O2 -Wall" ek
 
 #HP-UX 9.0 or higher with ANSI C.
 hp:
@@ -57,7 +57,7 @@ hp:
 
 #To get profile, build this target, run it, then "gprof ./ek > file".
 gprof:
-	make "CC=gcc" "CC2=gcc" ek "CFLAGS=-DNODEBUG -pg" "LNKFLAGS=-pg"
+	make "CC=gcc" "CC2=gcc" ek "CFLAGS=-DNODEBUG -Wall -pg" "LNKFLAGS=-pg"
 
 clean:
 	rm -f $(OBJS) core
